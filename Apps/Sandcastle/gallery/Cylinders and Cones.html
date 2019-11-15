@@ -27,6 +27,7 @@
 function startup(Cesium) {
     'use strict';
 //Sandcastle_Begin
+Cesium.Ion.defaultAccessToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNDZmYzI0OS02YmUyLTRiYzYtOGRiNi1jMzRhYWQ0YWRiNGIiLCJpZCI6OTU2NCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU1NDM1Mzg1NH0.6Vh6zLwkuMEDSjKPHf_rMKs9hifXO8-UBC3GQr9L95E";
 var viewer = new Cesium.Viewer('cesiumContainer');
 
 var greenCylinder = viewer.entities.add({
@@ -41,6 +42,16 @@ var greenCylinder = viewer.entities.add({
         outlineColor : Cesium.Color.DARK_GREEN
     }
 });
+var label = viewer.entities.add({
+    position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 450000.0),
+    label : {
+        font : "10pt DinPro Regular",
+        text:"LABEL",
+        material : Cesium.Color.WHITE,
+    }
+});
+
+console.log("TEST");
 
 var redCone = viewer.entities.add({
     name : 'Red cone',

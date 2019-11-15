@@ -13,7 +13,8 @@ define([
         '../Scene/HorizontalOrigin',
         '../Scene/VerticalOrigin',
         './BoundingSphereState',
-        './Property'
+        './Property',
+        '../Core/Matrix4'
     ], function(
         AssociativeArray,
         BoundingRectangle,
@@ -29,7 +30,8 @@ define([
         HorizontalOrigin,
         VerticalOrigin,
         BoundingSphereState,
-        Property) {
+        Property,
+        Matrix4) {
     'use strict';
 
     var defaultColor = Color.WHITE;
@@ -52,6 +54,7 @@ define([
     var pixelOffsetScaleByDistanceScratch = new NearFarScalar();
     var boundingRectangleScratch = new BoundingRectangle();
     var distanceDisplayConditionScratch = new DistanceDisplayCondition();
+    var modelMatrixScratch = new Matrix4();
 
     function EntityData(entity) {
         this.entity = entity;
@@ -110,10 +113,17 @@ define([
             var billboard = item.billboard;
             var show = entity.isShowing && entity.isAvailable(time) && Property.getValueOrDefault(billboardGraphics._show, time, true);
             var position;
+
+            var modelMatrix;
             if (show) {
+                modelMatrix = entity.computeModelMatrix(time, modelMatrixScratch);
                 position = Property.getValueOrUndefined(entity._position, time, positionScratch);
                 textureValue = Property.getValueOrUndefined(billboardGraphics._image, time);
-                show = defined(position) && defined(textureValue);
+                show = defined(modelMatrix) && defined(position) && defined(textureValue);
+
+
+
+
             }
 
             if (!show) {
@@ -138,6 +148,12 @@ define([
                 billboard.image = textureValue;
                 item.textureValue = textureValue;
             }
+
+            //var Yaw = Math.atan2(-modelMatrix[Matrix4.COLUMN2ROW0],modelMatrix[Matrix4.COLUMN0ROW0]);
+            //var Pitch = Math.asin(modelMatrix[Matrix4.COLUMN1ROW0]);
+            //var Roll = Math.atan2(-modelMatrix[Matrix4.COLUMN1ROW2],modelMatrix[Matrix4.COLUMN1ROW1]);
+            //console.log("Yaw,Pitch,Roll ",Yaw*180,Pitch*180,Roll*180);
+
             billboard.position = position;
             billboard.color = Property.getValueOrDefault(billboardGraphics._color, time, defaultColor, colorScratch);
             billboard.eyeOffset = Property.getValueOrDefault(billboardGraphics._eyeOffset, time, defaultEyeOffset, eyeOffsetScratch);
@@ -145,6 +161,7 @@ define([
             billboard.pixelOffset = Property.getValueOrDefault(billboardGraphics._pixelOffset, time, defaultPixelOffset, pixelOffsetScratch);
             billboard.scale = Property.getValueOrDefault(billboardGraphics._scale, time, defaultScale);
             billboard.rotation = Property.getValueOrDefault(billboardGraphics._rotation, time, defaultRotation);
+            //billboard.rotation = Roll;
             billboard.alignedAxis = Property.getValueOrDefault(billboardGraphics._alignedAxis, time, defaultAlignedAxis);
             billboard.horizontalOrigin = Property.getValueOrDefault(billboardGraphics._horizontalOrigin, time, defaultHorizontalOrigin);
             billboard.verticalOrigin = Property.getValueOrDefault(billboardGraphics._verticalOrigin, time, defaultVerticalOrigin);

@@ -2063,7 +2063,6 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
         //has become undefined after trackedEntity is set but before the boundingSphere has been
         //computed. In this case, we will track the entity once it comes back into existence.
         var currentPosition = Property.getValueOrUndefined(trackedEntity.position, currentTime);
-
         if (!defined(currentPosition)) {
             return;
         }

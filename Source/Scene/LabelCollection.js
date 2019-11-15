@@ -881,6 +881,7 @@ define([
             if (label.isDestroyed()) {
                 continue;
             }
+            console.log("Label Update");
 
             var preUpdateGlyphCount = label._glyphs.length;
 
@@ -899,6 +900,8 @@ define([
         }
 
         var blendOption = backgroundBillboardCollection.length > 0 ? BlendOption.TRANSLUCENT : this.blendOption;
+        //console.log("blendOption",blendOption,BlendOption.TRANSLUCENT);
+        blendOption=BlendOption.TRANSLUCENT;
         billboardCollection.blendOption = blendOption;
         backgroundBillboardCollection.blendOption = blendOption;
 

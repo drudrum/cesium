@@ -3,6 +3,7 @@ define([
         '../Core/BoundingRectangle',
         '../Core/Cartesian2',
         '../Core/Cartesian3',
+        '../Core/Plane',
         '../Core/Cartographic',
         '../Core/ClockRange',
         '../Core/ClockStep',
@@ -46,6 +47,7 @@ define([
         '../ThirdParty/when',
         './BillboardGraphics',
         './BoxGraphics',
+        './PlaneGraphics',
         './CallbackProperty',
         './CheckerboardMaterialProperty',
         './ColorMaterialProperty',
@@ -96,6 +98,7 @@ define([
         BoundingRectangle,
         Cartesian2,
         Cartesian3,
+        Plane,
         Cartographic,
         ClockRange,
         ClockStep,
@@ -139,6 +142,7 @@ define([
         when,
         BillboardGraphics,
         BoxGraphics,
+        PlaneGraphics,
         CallbackProperty,
         CheckerboardMaterialProperty,
         ColorMaterialProperty,
@@ -720,7 +724,6 @@ define([
         // and client-side velocity computation properties such as VelocityVectorProperty.
         var isValue = !defined(packetData.reference) && !defined(packetData.velocityReference);
         var hasInterval = defined(combinedInterval) && !combinedInterval.equals(Iso8601.MAXIMUM_INTERVAL);
-
         if (packetData.delete === true) {
             // If deleting this property for all time, we can simply set to undefined and return.
             if (!hasInterval) {
@@ -731,7 +734,6 @@ define([
             // Deleting depends on the type of property we have.
             return removePropertyData(object[propertyName], combinedInterval);
         }
-
         var isSampled = false;
 
         if (isValue) {
@@ -1471,6 +1473,45 @@ define([
         processPacketData(Number, box, 'outlineWidth', boxData.outlineWidth, interval, sourceUri, entityCollection);
         processPacketData(ShadowMode, box, 'shadows', boxData.shadows, interval, sourceUri, entityCollection);
         processPacketData(DistanceDisplayCondition, box, 'distanceDisplayCondition', boxData.distanceDisplayCondition, interval, sourceUri, entityCollection);
+    }
+
+    function processPlaneProperty(type,parent,packetData, interval, sourceUri, entityCollection) {
+        if (!defined(packetData)) {
+            return;
+        }
+
+        if (isArray(packetData)) {
+          Plane.unpack(packetData,0,parent.plane);
+        }else{
+          processPacketData(Cartesian3, parent.plane, 'normal', packetData.normal, interval, sourceUri, entityCollection);
+          processPacketData(Number, parent.plane, 'distance', packetData.distance, interval, sourceUri, entityCollection);
+        }
+    }
+
+    function processPlane(entity, packet, entityCollection, sourceUri) {
+        var planeData = packet.plane;
+        if (!defined(planeData)) {
+            return;
+        }
+
+        var interval = intervalFromString(planeData.interval);
+        var plane = entity.plane;
+        if (!defined(plane)) {
+            entity.plane = plane = new PlaneGraphics({
+              plane:new Plane(Cartesian3.UNIT_Z, 0.0)
+            });
+        }
+
+        processPacketData(Boolean, plane, 'show', planeData.show, interval, sourceUri, entityCollection);
+        processPlaneProperty(Plane, plane, planeData.plane, interval, sourceUri, entityCollection);
+        processPacketData(Cartesian2, plane, 'dimensions', planeData.dimensions, interval, sourceUri, entityCollection);
+        processPacketData(Boolean, plane, 'fill', planeData.fill, interval, sourceUri, entityCollection);
+        processMaterialPacketData(plane, 'material', planeData.material, interval, sourceUri, entityCollection);
+        processPacketData(Boolean, plane, 'outline', planeData.outline, interval, sourceUri, entityCollection);
+        processPacketData(Color, plane, 'outlineColor', planeData.outlineColor, interval, sourceUri, entityCollection);
+        processPacketData(Number, plane, 'outlineWidth', planeData.outlineWidth, interval, sourceUri, entityCollection);
+        processPacketData(ShadowMode, plane, 'shadows', planeData.shadows, interval, sourceUri, entityCollection);
+        processPacketData(DistanceDisplayCondition, plane, 'distanceDisplayCondition', planeData.distanceDisplayCondition, interval, sourceUri, entityCollection);
     }
 
     function processCorridor(entity, packet, entityCollection, sourceUri) {
@@ -2357,6 +2398,7 @@ define([
     CzmlDataSource.updaters = [
         processBillboard, //
         processBox, //
+        processPlane, //
         processCorridor, //
         processCylinder, //
         processEllipse, //

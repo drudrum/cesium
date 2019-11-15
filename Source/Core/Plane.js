@@ -1,5 +1,6 @@
 define([
         './Cartesian3',
+        './defaultValue',
         './Check',
         './defined',
         './DeveloperError',
@@ -8,6 +9,7 @@ define([
         './Matrix4'
     ], function(
         Cartesian3,
+        defaultValue,
         Check,
         defined,
         DeveloperError,
@@ -34,6 +36,8 @@ define([
      * is on.  If <code>distance</code> is positive, the origin is in the half-space
      * in the direction of the normal; if negative, the origin is in the half-space
      * opposite to the normal; if zero, the plane passes through the origin.
+     *
+     * @see Packable
      *
      * @example
      * // The plane x=0
@@ -242,6 +246,60 @@ define([
         //>>includeEnd('debug');
 
         return (left.distance === right.distance) && Cartesian3.equals(left.normal, right.normal);
+    };
+
+    /**
+     * The number of elements used to pack the object into an array.
+     * @type {Number}
+     */
+    Plane.packedLength = 4;
+
+    /**
+     * Stores the provided instance into the provided array.
+     *
+     * @param {Plane} value The value to pack.
+     * @param {Number[]} array The array to pack into.
+     * @param {Number} [startingIndex=0] The index into the array at which to start packing the elements.
+     *
+     * @returns {Number[]} The array that was packed into
+     */
+    Plane.pack = function(value, array, startingIndex) {
+        //>>includeStart('debug', pragmas.debug);
+        Check.typeOf.object('value', value);
+        Check.defined('array', array);
+        //>>includeEnd('debug');
+
+        startingIndex = defaultValue(startingIndex, 0);
+
+        Cartesian3.pack(value.normal,array,startingIndex);
+        startingIndex+=Cartesian3.packedLength;
+        array[startingIndex++] = value.distance;
+
+        return array;
+    };
+
+    /**
+     * Retrieves an instance from a packed array.
+     *
+     * @param {Number[]} array The packed array.
+     * @param {Number} [startingIndex=0] The starting index of the element to be unpacked.
+     * @param {Plane} [result] The object into which to store the result.
+     * @returns {Plane} The modified result parameter or a new Cartesian3 instance if one was not provided.
+     */
+    Plane.unpack = function(array, startingIndex, result) {
+        //>>includeStart('debug', pragmas.debug);
+        Check.defined('array', array);
+        //>>includeEnd('debug');
+
+        startingIndex = defaultValue(startingIndex, 0);
+
+        if (!defined(result)) {
+            result = new Plane();
+        }
+        result.normal = Cartesian3.unpack(array,startingIndex);
+        startingIndex+=Cartesian3.packedLength;
+        result.distance = array[startingIndex++];
+        return result;
     };
 
     /**
