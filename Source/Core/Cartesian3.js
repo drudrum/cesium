@@ -411,6 +411,11 @@ define([
         //>>includeEnd('debug');
 
         var magnitude = Cartesian3.magnitude(cartesian);
+        if (magnitude == 0){
+          //Zero vector
+          Cartesian3.clone(cartesian,result);
+          return;
+        }
 
         result.x = cartesian.x / magnitude;
         result.y = cartesian.y / magnitude;

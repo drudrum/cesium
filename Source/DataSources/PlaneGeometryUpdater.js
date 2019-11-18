@@ -75,7 +75,7 @@ define([
             geometryPropertyName : 'plane',
             observedPropertyNames : ['availability', 'position', 'orientation', 'plane']
         });
-        
+
         this._onEntityPropertyChanged(entity, 'plane', entity.plane, undefined);
     }
 
@@ -264,12 +264,21 @@ define([
         Cartesian3.normalize(transformedNormal, transformedNormal);
 
         var up = ellipsoid.geodeticSurfaceNormal(translation, scratchAxis2);
-        if (CesiumMath.equalsEpsilon(Math.abs(Cartesian3.dot(up, transformedNormal)), 1.0, CesiumMath.EPSILON8)) {
-            up = Cartesian3.clone(Cartesian3.UNIT_Z, up);
-        }
+        //console.log(debugVector('up',up)+' '+debugVector('transformedNormal',transformedNormal));
+        //if (CesiumMath.equalsEpsilon(Math.abs(Cartesian3.dot(up, transformedNormal)), 1.0, CesiumMath.EPSILON8)) {
+        //    up = Cartesian3.clone(Cartesian3.UNIT_Z, up);
+        //}
 
-        var left = Cartesian3.cross(up, transformedNormal, scratchAxis);
+        function debugVector(name,vector){
+          return name+":"+[
+            vector.x.toFixed(2),
+            vector.y.toFixed(2),
+            vector.z.toFixed(2)].join(',');
+        };
+
+        var left = Cartesian3.cross(transformedNormal, up, scratchAxis);
         up = Cartesian3.cross(transformedNormal, left, up);
+        //console.log(debugVector('left',left));
         Cartesian3.normalize(left, left);
         Cartesian3.normalize(up, up);
 
