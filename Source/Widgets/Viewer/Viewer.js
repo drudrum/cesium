@@ -1602,7 +1602,7 @@ Either specify options.terrainProvider instead or set options.baseLayerPicker to
             var trackedState = this._dataSourceDisplay.getBoundingSphere(trackedEntity, false, boundingSphereScratch);
             if (trackedState === BoundingSphereState.DONE) {
                 entityView.update(time, boundingSphereScratch);
-            }
+            }else console.log("trackedState = "+trackedState);
         }
 
         var position;

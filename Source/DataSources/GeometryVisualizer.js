@@ -283,6 +283,7 @@ define([
 
     var getBoundingSphereArrayScratch = [];
     var getBoundingSphereBoundingSphereScratch = new BoundingSphere();
+    var throwIdx=0;
 
     /**
      * Computes a bounding sphere which encloses the visualization produced for the specified entity.
@@ -324,7 +325,7 @@ define([
                 }
             }
         }
-
+        console.log("Count =",count);
         if (count === 0) {
             return BoundingSphereState.FAILED;
         }

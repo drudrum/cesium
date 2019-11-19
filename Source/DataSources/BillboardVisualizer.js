@@ -120,10 +120,6 @@ define([
                 position = Property.getValueOrUndefined(entity._position, time, positionScratch);
                 textureValue = Property.getValueOrUndefined(billboardGraphics._image, time);
                 show = defined(modelMatrix) && defined(position) && defined(textureValue);
-
-
-
-
             }
 
             if (!show) {

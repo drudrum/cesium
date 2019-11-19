@@ -83,7 +83,7 @@ define([
         PlaneGeometryUpdater.prototype = Object.create(GeometryUpdater.prototype);
         PlaneGeometryUpdater.prototype.constructor = PlaneGeometryUpdater;
     }
-
+    var dbgCount=0;
     /**
      * Creates the geometry instance which represents the fill of the geometry.
      *
@@ -142,12 +142,17 @@ define([
 
         modelMatrix = createPrimitiveMatrix(plane, dimensions, modelMatrix, this._scene.mapProjection.ellipsoid, modelMatrix);
 
-        return new GeometryInstance({
+        var inst=new GeometryInstance({
             id : entity,
             geometry : new PlaneGeometry(this._options),
             modelMatrix : modelMatrix,
             attributes : attributes
         });
+        dbgCount++;
+        inst["!!!TEST"]="TESTING"+dbgCount;
+        console.log(inst);
+        return  inst;
+        //return fillInstance at DynamicGeometryUpdater
     };
 
     /**

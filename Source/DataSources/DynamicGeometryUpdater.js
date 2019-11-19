@@ -99,6 +99,7 @@ define([
 
         var shadows = this._geometryUpdater.shadowsProperty.getValue(time);
         var options = this._options;
+        console.log("dbg ",geometry["!!!TEST"]);
         if (!defined(geometry.fill) || geometry.fill.getValue(time)) {
             var fillMaterialProperty = geometryUpdater.fillMaterialProperty;
             var isColorAppearance = fillMaterialProperty instanceof ColorMaterialProperty;
@@ -132,6 +133,7 @@ define([
                 options.vertexFormat = appearance.vertexFormat;
 
                 var fillInstance = this._geometryUpdater.createFillGeometryInstance(time);
+                console.log("fillInstance",fillInstance["!!!TEST"]);
 
                 if (isColorAppearance) {
                     appearance.translucent = fillInstance.attributes.color.value[3] !== 255;
@@ -204,10 +206,11 @@ define([
                 return BoundingSphereState.DONE;
             }
         }
+        defined(primitive) && console.log('primitive',primitive.ready?"Y":"N",this);
 
-        if ((defined(primitive) && !primitive.ready) || (defined(outlinePrimitive) && !outlinePrimitive.ready)) {
-            return BoundingSphereState.PENDING;
-        }
+        //if ((defined(primitive) && !primitive.ready) || (defined(outlinePrimitive) && !outlinePrimitive.ready)) {
+        //    return BoundingSphereState.PENDING;
+        //}
 
         return BoundingSphereState.FAILED;
     };
